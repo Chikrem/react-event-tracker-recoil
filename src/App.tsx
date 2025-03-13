@@ -1,37 +1,24 @@
-// Início Aula-1
-
-import React, { useState } from "react";
-import style from "./App.module.scss";
-import Card from "./components/Card";
-import Formulario from "./components/Formulario";
-import Calendario from "./components/Calendario";
-import ListaDeEventos from "./components/ListaDeEventos";
-
-import { RecoilRoot } from "recoil";
+import { useState } from 'react';
+import style from './App.module.scss';
+import Card from './components/Card';
+import Formulario from './components/Formulario';
+import { IEvento } from './interfaces/IEvento';
+import Calendario from './components/Calendario';
+import ListaDeEventos from './components/ListaDeEventos';
+import { RecoilRoot } from 'recoil'
 
 function App() {
 
-  const [filtro, setFiltro] = useState<Date | null>();
+  const [filtro, setFiltro] = useState<Date | null>()
 
-  const alterarStatusEvento = (id: number) => {
-    // const evento = eventos.find((evento) => evento.id === id);
-    // if (evento) {
-    //   evento.completo = !evento.completo;
-    // }
-    // setEventos([...eventos]);
-  };
+  const adicionarEvento = (evento: IEvento) => {
+    evento.id = Math.round((new Date()).getTime() / 1000)
+
+  }
 
   const aplicarFiltro = (data: Date | null) => {
-    setFiltro(data);
-  };
-
-  const filtrados = !filtro
-    // ? eventos
-    // : eventos.filter(
-    //     (evento) =>
-    //       filtro!.toISOString().slice(0, 10) ===
-    //       evento.inicio.toISOString().slice(0, 10)
-    //   );
+    setFiltro(data)
+  }
 
   return (
     <RecoilRoot>
@@ -44,8 +31,7 @@ function App() {
           <Card>
             <ListaDeEventos
               aoFiltroAplicado={aplicarFiltro}
-              aoAlterarStatus={alterarStatusEvento}
-            />
+              />
           </Card>
         </div>
         <div className={style.Coluna}>
