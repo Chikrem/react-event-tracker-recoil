@@ -1,11 +1,13 @@
-
 import React from 'react'
 import style from './Calendario.module.scss';
 import ptBR from './localizacao/ptBR.json'
-import Kalend, { CalendarView } from 'kalend'
+import Kalend, { CalendarEvent, CalendarView, OnEventDragFinish } from 'kalend'
 import 'kalend/dist/styles/index.css';
 import { useRecoilValue } from 'recoil';
 import { listaDeEventosState } from '../../state/atom';
+import {useSetRecoilState} from "recoil"
+import { IEvento } from '../../interfaces/IEvento';
+
 
 interface IKalendEvento {
   id?: number
@@ -18,9 +20,9 @@ interface IKalendEvento {
 const Calendario: React.FC = () => {
 
   const eventosKalend = new Map<string, IKalendEvento[]>();
+  const eventos = useRecoilValue(listaDeEventosState);
+  const setListaDeEventos = useSetRecoilState<IEvento[]>(listaDeEventosState)
 
-  const eventos = useRecoilValue(listaDeEventosState); // Recupera dados do eventos com o hook Recoil
-  
   eventos.forEach(evento => {
     const chave = evento.inicio.toISOString().slice(0, 10)
     if (!eventosKalend.has(chave)) {
@@ -34,6 +36,26 @@ const Calendario: React.FC = () => {
       color: 'blue'
     })
   })
+
+  const onEventDragFinish: OnEventDragFinish = (
+    kalendEventoInalterado : CalendarEvent,
+    kalendEventoAtualizado: CalendarEvent,
+
+  ) => {
+    const evento = eventos.find(evento => evento.descricao === kalendEventoAtualizado.summary)
+    if(evento){
+      const eventoAtualizado = { ...evento }
+      eventoAtualizado.inicio = new Date(kalendEventoAtualizado.startAt)
+      eventoAtualizado.fim = new Date(kalendEventoAtualizado.endAt)
+
+      setListaDeEventos(listaAntiga => {
+
+        const i  = listaAntiga.findIndex(e => e.id ===  evento.id )
+        return [...listaAntiga.slice(0,i) , eventoAtualizado, ...listaAntiga.slice(i+1)]
+      })
+    }
+  };
+
   return (
     <div className={style.Container}>
       <Kalend
@@ -46,6 +68,7 @@ const Calendario: React.FC = () => {
         calendarIDsHidden={['work']}
         language={'customLanguage'}
         customLanguage={ptBR}
+        onEventDragFinish={onEventDragFinish}
       />
     </div>
   );
