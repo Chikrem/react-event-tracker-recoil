@@ -9,10 +9,6 @@ import { RecoilRoot } from 'recoil'
 
 function App() {
 
-  const aplicarFiltro = (data: Date | null) => {
-    // setFiltro(data)
-  }
-
   return (
     <RecoilRoot>
       <div className={style.App}>
@@ -22,9 +18,7 @@ function App() {
           </Card>
           <hr />
           <Card>
-            <ListaDeEventos
-              aoFiltroAplicado={aplicarFiltro}
-              />
+            <ListaDeEventos />
           </Card>
         </div>
         <div className={style.Coluna}>
