@@ -1,4 +1,5 @@
-import { useState } from 'react';
+// Início Aula-2
+
 import style from './App.module.scss';
 import Card from './components/Card';
 import Formulario from './components/Formulario';
