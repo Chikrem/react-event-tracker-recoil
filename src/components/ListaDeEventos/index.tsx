@@ -1,20 +1,29 @@
 import React from 'react';
-import { IEvento } from '../../interfaces/IEvento';
 import Evento from '../Evento';
 import Filtro from '../Filtro';
 import style from './ListaDeEventos.module.scss';
+import useListaDeEventos from '../../state/hooks/useListaDeEventos';
+import { useRecoilValue } from 'recoil';
+import { IFiltroDeEventos } from '../../interfaces/IFiltroDeEventos';
+import { filtroDeEventos } from '../../state/atom';
 
-const ListaDeEventos: React.FC<{ 
-  eventos: IEvento[], 
-  aoAlterarStatus: (id: number) => void, 
-  aoDeletarEvento: (id: number) => void, 
-  aoFiltroAplicado: (data: Date | null) => void }> = ({ eventos, aoDeletarEvento, aoAlterarStatus, aoFiltroAplicado }) => {
+const ListaDeEventos: React.FC = () => {
+
+  const todosOsEventos = useListaDeEventos()
+  const filtro = useRecoilValue<IFiltroDeEventos>(filtroDeEventos)
+
+  const eventos = todosOsEventos.filter(evento => {
+    if (!filtro.data) {
+      return true
+    } const ehMesmoDia = filtro.data.toISOString().slice(0, 10) === evento.inicio.toISOString().slice(0, 10)
+    return ehMesmoDia
+  })
 
   return (<section>
-    <Filtro aoFiltroAplicado={aoFiltroAplicado} />
+    <Filtro />
     <div className={style.Scroll}>
       {eventos.map(evento => (
-        <Evento aoAlterarStatus={aoAlterarStatus} aoDeletarEvento={aoDeletarEvento} evento={evento} key={evento.id} />
+        <Evento evento={evento} key={evento.id} />
       ))}
     </div>
   </section>)
